@@ -29,8 +29,15 @@ test_dataloader = DataLoader(test_data, batch_size=64)
 
 from torch import nn
 
-model = densnet161()
+model = resnet18()
 model.fc = nn.Linear(512, 10)
+
+for name, module in model.named_children():
+    if name == 'fc':
+        continue
+    print(name, module)
+    module = nn.Sequential(module, nn.Dropout(p=0.1))
+
 model = model.to(device)
 #optim = torch.optim.Adam(model.parameters(), lr=1e-3)
 #print(model)

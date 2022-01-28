@@ -2,6 +2,7 @@ from work_model import train, test
 from qhoptim.pyt  import QHAdam
 from torch.optim.lr_scheduler import ExponentialLR
 from torch import nn
+import torch
 
 from data import project, run, config, device
 

@@ -1,22 +1,55 @@
 import torch
 from data import project, run, config, device
+from torchvision.transforms import Grayscale, autoaugment, AutoAugment
+import numpy as np
+
+augmenter = AutoAugment(autoaugment.AutoAugmentPolicy.SVHN)
+def prepare_data(x):
+  return augmenter((x* 255).to(torch.uint8)).to(torch.float) / 255
+
+def gray(x):
+  return Grayscale()((x * 255).to(torch.uint8)).to(torch.float) / 255
+
+def cat_one(image, size=4, n_squares=1):
+    h, w, channels = image.shape
+    new_image = image
+    for _ in range(n_squares):
+        y = np.random.randint(h)
+        x = np.random.randint(w)
+        y1 = np.clip(y - size // 2, 0, h)
+        y2 = np.clip(y + size // 2, 0, h)
+        x1 = np.clip(x - size // 2, 0, w)
+        x2 = np.clip(x + size // 2, 0, w)
+        v = torch.sum(new_image[:, x1:x2, y1:y2], (2, 1)) / (size ** 2)
+        for k in range(3):
+          new_image[k, x1:x2, y1:y2] = v[k]
+    return new_image
+
+def cat_out(image, size=4, n_squares=1):
+  new_image = image
+  for i in range(image.shape[0]):
+    new_image[i] = cat_one(image[i], size,n_squares)
+  return new_image
 
 def train(dataloader, steps, model, optim, fun_loss, flag=True):
     model.train()
-  #  print(model)
-  #  i = 0
+    sm = 0.0
+    cn = 0.0
     for batch, (x, y) in enumerate(dataloader):
         optim.zero_grad()
-        x = x.to(device)
+        x = cat_out(prepare_data(x.to(device)))
         y = y.to(device)
         ans = model(x)
+        sm += (ans.argmax(dim=1) == y).type(torch.float).sum().item()
+        cn += ans.shape[0]
         loss = fun_loss(ans, y)
         loss.backward()
         optim.step()
         step =  steps + (1 + batch) / len(dataloader)
         if flag and batch % 1 == 0:
             run['losses'].log(loss.item(), step=step)
-
+    if flag:
+      run['train_accuracy'].log(sm / cn, step=steps + 1)
 
 
 def test(dataloader, step, model, fun_loss, flag=True):
