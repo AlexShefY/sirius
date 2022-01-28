@@ -69,4 +69,4 @@ elif config == "train with different":
     nus_second_l = [1.0] * len(lr_l)
     betas_first_l = [0.995] * len(lr_l)
     betas_second_l = [0.999] * len(lr_l)
-    def_train_with_different(train_dataloader, val_dataloader, test_dataloader, lr_l, nus_first_l, nus_second_l, betas_first_l, betas_second_l)
+    def_different_param(train_dataloader, val_dataloader, test_dataloader, lr_l, nus_first_l, nus_second_l, betas_first_l, betas_second_l)
