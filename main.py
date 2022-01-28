@@ -1,6 +1,6 @@
 import torch
 import pickle
-from torchvision.models import resnet18
+from torchvision.models import resnet18, resnet50, densnet161
 from torch.utils.data import DataLoader
 
 from train_one_model import def_train_one_model
@@ -29,13 +29,14 @@ test_dataloader = DataLoader(test_data, batch_size=64)
 
 from torch import nn
 
-model = resnet18()
+model = densnet161()
 model.fc = nn.Linear(512, 10)
 model = model.to(device)
 #optim = torch.optim.Adam(model.parameters(), lr=1e-3)
 #print(model)
 #print("A")
 
+print(model)
 import plotly.express as px
 import numpy as np
 
@@ -61,4 +62,4 @@ elif config == "train with different":
     nus_second_l = [1.0] * len(lr_l)
     betas_first_l = [0.995] * len(lr_l)
     betas_second_l = [0.999] * len(lr_l)
-    def_train_with_different(model, train_dataloader, val_dataloader, test_dataloader, lr_l, nus_first_l, nus_second_l, betas_first_l, betas_second_l)
+    def_train_with_different(train_dataloader, val_dataloader, test_dataloader, lr_l, nus_first_l, nus_second_l, betas_first_l, betas_second_l)
