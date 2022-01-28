@@ -1,4 +1,4 @@
-
+import torch
 from data import project, run, config, device
 
 def train(dataloader, steps, model, optim, fun_loss, flag=True):
@@ -11,12 +11,6 @@ def train(dataloader, steps, model, optim, fun_loss, flag=True):
         y = y.to(device)
         ans = model(x)
         loss = fun_loss(ans, y)
-        print(x)
-        print(y)
-        print(ans)
-        print(loss)
-        if batch == 10:
-            break
         loss.backward()
         optim.step()
         step =  steps + (1 + batch) / len(dataloader)

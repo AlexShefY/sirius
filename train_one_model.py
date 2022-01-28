@@ -22,7 +22,6 @@ def def_train_one_model(model, train_dataloader, val_dataloader, test_dataloader
 	print(t)
 	for epoch in range(epochs):
 	    train(train_dataloader, epoch + 1, model, optim, loss)
-	    break
 	    test(val_dataloader,epoch + 1, model, loss)
 	    scheduler.step()
 	    torch.save(data.model, f'model{t}_{epoch}.pt')

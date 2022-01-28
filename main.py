@@ -1,6 +1,6 @@
 import torch
 import pickle
-from torchvision.models import resnet18, resnet50, densnet161
+from torchvision.models import resnet18, resnet50, densenet161
 from torch.utils.data import DataLoader
 
 from train_one_model import def_train_one_model
