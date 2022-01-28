@@ -20,80 +20,80 @@ import neptune.new as neptune
 project = neptune.init_project(name="lora0207/sirius", api_token="eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiJkZmQyMjc4Ni02NWQwLTRiZTYtYWIyZC0yOGJjOTE2NDNmODEifQ==")
 
 
-# class SVHN(VisionDataset):
+class SVHN(VisionDataset):
 
-#     def __init__(self,
-#                  root: str,
-#                  is_train: bool = True,
-#                  transform: Optional[Callable] = None,
-#                  target_transform: Optional[Callable] = None,
-#                  ) -> None:
+    def __init__(self,
+                 root: str,
+                 is_train: bool = True,
+                 transform: Optional[Callable] = None,
+                 target_transform: Optional[Callable] = None,
+                 ) -> None:
 
-#         super().__init__(root, transform=transform, target_transform=target_transform)
-#         self.is_train = is_train
+        super().__init__(root, transform=transform, target_transform=target_transform)
+        self.is_train = is_train
 
-#         meta_path = os.path.join(self.root, 'meta')
-#         with open(meta_path, "rb") as f:
-#             content = pickle.load(f)
-#             self.classes = content['label_names']
-#             self.class_to_idx = {_class: i for i, _class in enumerate(self.classes)}
+        meta_path = os.path.join(self.root, 'meta')
+        with open(meta_path, "rb") as f:
+            content = pickle.load(f)
+            self.classes = content['label_names']
+            self.class_to_idx = {_class: i for i, _class in enumerate(self.classes)}
 
-#         data_path = os.path.join(self.root, 'data_train' if is_train else 'data_test')
-#         with open(data_path, "rb") as f:
-#             content = pickle.load(f)
-#             self.data = content['images']
-#             self.targets = content.get('labels')
+        data_path = os.path.join(self.root, 'data_train' if is_train else 'data_test')
+        with open(data_path, "rb") as f:
+            content = pickle.load(f)
+            self.data = content['images']
+            self.targets = content.get('labels')
 
-#     def __getitem__(self, index: int) -> Tuple[Any, Any]:
-#         img = Image.fromarray(self.data[index].astype(np.uint8))
-#         target = self.targets[index] if self.is_train else len(self.classes)
-#         if self.transform is not None:
-#             img = self.transform(img)
-#         if self.target_transform is not None:
-#             target = self.target_transform(target)
-#         return img, target
+    def __getitem__(self, index: int) -> Tuple[Any, Any]:
+        img = Image.fromarray(self.data[index].astype(np.uint8))
+        target = self.targets[index] if self.is_train else len(self.classes)
+        if self.transform is not None:
+            img = self.transform(img)
+        if self.target_transform is not None:
+            target = self.target_transform(target)
+        return img, target
 
-#     def __len__(self) -> int:
-#         return len(self.data)
+    def __len__(self) -> int:
+        return len(self.data)
         
-#     def extra_repr(self) -> str:
-#         split = "Train" if self.train is True else "Test"
-#         return f"Split: {split}"
+    def extra_repr(self) -> str:
+        split = "Train" if self.train is True else "Test"
+        return f"Split: {split}"
 
-# data = SVHN(
-#     root="sirius-spbsu-2022-entry-competition",
-#     is_train=True,
-#     transform=ToTensor(),
-# )
+data = SVHN(
+    root="sirius-spbsu-2022-entry-competition",
+    is_train=True,
+    transform=ToTensor(),
+)
 
-# train_data, val_data = torch.utils.data.random_split(
-#     data, 
-#     [40000, 10000], 
-#     generator=torch.Generator().manual_seed(137),
-# )
+train_data, val_data = torch.utils.data.random_split(
+    data, 
+    [40000, 10000], 
+    generator=torch.Generator().manual_seed(137),
+)
 
-# batch_size = 64
-# train_dataloader = DataLoader(train_data, batch_size=batch_size)
-# val_dataloader = DataLoader(val_data, batch_size=batch_size)
+batch_size = 64
+train_dataloader = DataLoader(train_data, batch_size=batch_size)
+val_dataloader = DataLoader(val_data, batch_size=batch_size)
 
-# test_data = SVHN(
-#     root="sirius-spbsu-2022-entry-competition",
-#     is_train=False,
-#     transform=ToTensor(),
-# )
+test_data = SVHN(
+    root="sirius-spbsu-2022-entry-competition",
+    is_train=False,
+    transform=ToTensor(),
+)
 
-# test_dataloader = DataLoader(test_data, batch_size=batch_size,)
+test_dataloader = DataLoader(test_data, batch_size=batch_size,)
 import neptune.new as neptune
 from neptune.new.types import File
 
-# project = neptune.init_project(name="lora0207/sirius", api_token="eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiJkZmQyMjc4Ni02NWQwLTRiZTYtYWIyZC0yOGJjOTE2NDNmODEifQ==")
+project = neptune.init_project(name="lora0207/sirius", api_token="eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiJkZmQyMjc4Ni02NWQwLTRiZTYtYWIyZC0yOGJjOTE2NDNmODEifQ==")
 
-# lst1 = [(x, y) for (x, y) in train_dataloader.dataset]
-# lst2 = [(x, y) for (x, y) in val_dataloader.dataset]
-# lst3 = [(x, y) for (x, y) in test_dataloader.dataset]
+lst1 = [(x, y) for (x, y) in train_dataloader.dataset]
+lst2 = [(x, y) for (x, y) in val_dataloader.dataset]
+lst3 = [(x, y) for (x, y) in test_dataloader.dataset]
 
-# import plotly.express as px
-# import numpy as np
+import plotly.express as px
+import numpy as np
 
 # dx = [-1, 0, 0, 1]
 # dy = [0, 1, -1, 0]
@@ -107,34 +107,60 @@ from neptune.new.types import File
 
 # import cv2 as cv
 
-# def smooth(mat):
-#     sum_ = torch.zeros_like(mat)
-#     one = torch.ones_like(mat)
-#     cnt_ = torch.zeros_like(mat)
-#     b = (0 < mat) & (mat < 1)
-#     g = torch.where(b, mat, sum_)
-#     g1 = torch.where(b, one, sum_)
-#     cnt_[:, 1:, :] += g1[:, :-1, :]
-#     cnt_[:, :-1, :] += g1[:, 1:, :]
-#     cnt_[:, :, 1:] += g1[:, :, :-1]
-#     cnt_[:, :, :-1] += g1[:, :, 1:]
-#     sum_[:, 1:, :] += g[:, :-1, :]
-#     sum_[:, :-1, :] += g[:, 1:, :]
-#     sum_[:, :, 1:] += g[:, :, :-1]
-#     sum_[:, :, :-1] += g[:, :, 1:]
-#     return torch.where(b, mat, sum_ / cnt_)
+def smooth(mat):
+    sum_ = torch.zeros_like(mat)
+    one = torch.ones_like(mat)
+    cnt_ = torch.zeros_like(mat)
+    b = (0 < mat) & (mat < 1)
+    g = torch.where(b, mat, sum_)
+    g1 = torch.where(b, one, sum_)
+    cnt_[:, 1:, :] += g1[:, :-1, :]
+    cnt_[:, :-1, :] += g1[:, 1:, :]
+    cnt_[:, :, 1:] += g1[:, :, :-1]
+    cnt_[:, :, :-1] += g1[:, :, 1:]
+    sum_[:, 1:, :] += g[:, :-1, :]
+    sum_[:, :-1, :] += g[:, 1:, :]
+    sum_[:, :, 1:] += g[:, :, :-1]
+    sum_[:, :, :-1] += g[:, :, 1:]
+    b3 = (b == 0)
+    b2 = b3 + cnt_
+    b1 = (b2 < 2)
+    return torch.where(b1, mat, sum_ / cnt_)
 
-# for i in range(len(lst1)):
-#     lst1[i] = (smooth(lst1[i][0]), lst1[i][1])
-#     lst1[i] = (smooth(lst1[i][0]), lst1[i][1])
-#     lst1[i] = (smooth(lst1[i][0]), lst1[i][1])
+def show_im(pic):
+    to_plot = 32 * [[[]]]
+    for a in range(32):
+    	to_plot[a] = 32 * [[]]
+    	for b in range(32):
+    		to_plot[a][b] = 3 * [0]
+    		to_plot[a][b][0] = pic[0][a][b].item()
+    		to_plot[a][b][1] = pic[1][a][b].item()
+    		to_plot[a][b][2] = pic[2][a][b].item()
+    fig = px.imshow(to_plot)
+    fig.show()
+
+for i in range(len(lst1)):
+	for t in range(10):
+		lst1[i] = (smooth(lst1[i][0]), lst1[i][1])
+	#lst1[i] = (smooth(lst1[i][0]), lst1[i][1])
+	#lst1[i] = (smooth(lst1[i][0]), lst1[i][1])
+	#print(lst1[i][1])
+	#show_im(lst1[i][0])
+
+print("A")
 
 
+for i in range(len(lst2)):
+	for t in range(10):
+		lst2[i] = (smooth(lst2[i][0]), lst2[i][1])
+    #lst2[i] = (smooth(lst2[i][0]), lst2[i][1])
+    #lst2[i] = (smooth(lst2[i][0]), lst2[i][1])
 
-# for i in range(len(lst3)):
-#     lst3[i] = (smooth(lst3[i][0]), lst3[i][1])
-#     lst3[i] = (smooth(lst3[i][0]), lst3[i][1])
-#     lst3[i] = (smooth(lst3[i][0]), lst3[i][1])
+for i in range(len(lst3)):
+    for t in range(10):
+    	lst3[i] = (smooth(lst3[i][0]), lst3[i][1])
+    #lst3[i] = (smooth(lst3[i][0]), lst3[i][1])
+    #lst3[i] = (smooth(lst3[i][0]), lst3[i][1])
 
 # for j in range(10):
 #     i = j + 97
@@ -151,21 +177,23 @@ from neptune.new.types import File
 import pickle
 
 
-# fl1 = open("train_data_v.bin", "wb")
+fl1 = open("train_data_v.bin", "wb")
 
-# fl2 = open("val_data_v.bin", "wb")
+fl2 = open("val_data_v.bin", "wb")
 
-# fl3 = open("test_data_v.bin", "wb")
+fl3 = open("test_data_v.bin", "wb")
 
-# pickle.dump(lst1, fl1)
-# pickle.dump(lst2, fl2)
-# pickle.dump(lst3, fl3)
+pickle.dump(lst1, fl1)
+pickle.dump(lst2, fl2)
+pickle.dump(lst3, fl3)
 
 # project['val_data.bin'] = File("val_data.bin")
 # project['train_data.bin'] = File("train_data.bin") 
 # project['test_data.bin'] = File("test_data.bin")
 
 
-project['val_data_v.bin'] = File("val_data_v.bin")
-project['train_data_v.bin'] = File("train_data_v.bin") 
-project['test_data_v.bin'] = File("test_data_v.bin")
+project['val_data_v.bin'].upload("val_data_v.bin")
+project['train_data_v.bin'].upload("train_data_v.bin") 
+project['test_data_v.bin'].upload("test_data_v.bin")
+
+print("ALJH")
