@@ -25,5 +25,5 @@ def def_train_one_model(model, train_dataloader, val_dataloader, test_dataloader
 	    train(train_dataloader, epoch + 1, model, optim, loss)
 	    test(val_dataloader,epoch + 1, model, loss)
 	    scheduler.step()
-	    torch.save(data.model, f'model{t}_{epoch}.pt')
+	    torch.save(model, f'model{t}_{epoch}.pt')
 	    run[f'model{t}_{epoch}.pt'].upload(f'model{t}_{epoch}.pt')

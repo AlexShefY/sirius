@@ -46,7 +46,7 @@ def train(dataloader, steps, model, optim, fun_loss, flag=True):
         loss.backward()
         optim.step()
         step =  steps + (1 + batch) / len(dataloader)
-        if flag and batch % 1 == 0:
+        if flag and batch % 10 == 0:
             run['losses'].log(loss.item(), step=step)
     if flag:
       run['train_accuracy'].log(sm / cn, step=steps + 1)
