@@ -25,7 +25,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 #model = resnet18()
 
-name = 'models/model824506_20.pt.pt'
+name = 'models/model748642_46.pt.pt'
 
 model = torch.load(name, map_location=torch.device('cpu'))
 

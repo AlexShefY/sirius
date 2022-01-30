@@ -25,19 +25,26 @@ def cat_one(image, size=4, n_squares=1):
           new_image[k, x1:x2, y1:y2] = v[k]
     return new_image
 
-def cat_out(image, size=4, n_squares=1):
+def cat_out(image, size=4, n_squares=0):
   new_image = image
   for i in range(image.shape[0]):
     new_image[i] = cat_one(image[i], size,n_squares)
   return new_image
 
+from torchvision.transforms import ColorJitter, RandomPerspective
+
+jitter = ColorJitter(brightness=0.08616238087415695
+, contrast=0.1607924997806549
+, saturation=0, hue=0.07243576645851135
+)
+perspective = RandomPerspective()
 def train(dataloader, steps, model, optim, fun_loss, flag=True):
     model.train()
     sm = 0.0
     cn = 0.0
     for batch, (x, y) in enumerate(dataloader):
         optim.zero_grad()
-        x = cat_out(prepare_data(x.to(device)))
+        x = cat_out(jitter(perspective(x.to(device))))
         y = y.to(device)
         ans = model(x)
         sm += (ans.argmax(dim=1) == y).type(torch.float).sum().item()

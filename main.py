@@ -47,7 +47,7 @@ print(model)
 import plotly.express as px
 import numpy as np
 
-def im_show(pic, i):
+def im_show(pic):
     print(pic.shape)
     to_plot = 32 * [[[]]]
     for a in range(32):
@@ -60,6 +60,14 @@ def im_show(pic, i):
     fig = px.imshow(to_plot)
     fig.show()
     #fig.save("im${i}.jpg")
+
+
+i = 286
+for j in range(10):
+    print(train_dataloader.dataset[j + i][0].shape)
+    im_show(train_dataloader.dataset[j + i][0])
+    print(train_dataloader.dataset[j + i][1])
+
 
 if config == "train one model":
     def_train_one_model(model, train_dataloader, val_dataloader, test_dataloader)
