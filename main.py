@@ -2,15 +2,15 @@ import torch
 import pickle
 from torchvision.models import resnet18, resnet50, densenet161
 from torch.utils.data import DataLoader
-
+from models import M5
 from train_one_model import def_train_one_model
 from different_param import def_different_param
 
 from data import project, run, config, device
 
-#project['train_data_v.bin'].download()
-#project['test_data_v.bin'].download()
-#project['val_data_v.bin'].download()
+project['train_data_v.bin'].download()
+project['test_data_v.bin'].download()
+project['val_data_v.bin'].download()
 
 with open('train_data_v.bin.bin', 'rb') as file:
     train_data = pickle.load(file)
@@ -25,23 +25,19 @@ train_dataloader = DataLoader(train_data, batch_size=64, shuffle=True)
 val_dataloader = DataLoader(val_data, batch_size=64)
 test_dataloader = DataLoader(test_data, batch_size=64)
 
-#device = torch.device("cpu")
-
 from torch import nn
 
-model = resnet18()
-model.fc = nn.Linear(512, 10)
+model = M5()
+#model = resnet18()
+#model.fc = nn.Linear(512, 10)
 
-for name, module in model.named_children():
-    if name == 'fc':
-        continue
-    print(name, module)
-    module = nn.Sequential(module, nn.Dropout(p=0.1))
+#for name, module in model.named_children():
+#    if name == 'fc':
+#        continue
+#    print(name, module)
+#    module = nn.Sequential(module, nn.Dropout(p=0.1))
 
 model = model.to(device)
-#optim = torch.optim.Adam(model.parameters(), lr=1e-3)
-#print(model)
-#print("A")
 
 print(model)
 import plotly.express as px

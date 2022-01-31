@@ -8,7 +8,7 @@ from data import project, run, config, device
 
 def def_train_one_model(model, train_dataloader, val_dataloader, test_dataloader):
 #	print(model)
-	optim =  QHAdam(model.parameters(), lr=2e-4, nus = (0.38, 1.0), betas=(0.9, 0.999))
+	optim =  QHAdam(model.parameters(), lr=2e-4, nus = (0.7, 1.0), betas=(0.9, 0.999))
 
 	scheduler = ExponentialLR(optimizer = optim, gamma = 0.97)
 

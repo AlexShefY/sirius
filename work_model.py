@@ -33,11 +33,26 @@ def cat_out(image, size=4, n_squares=0):
 
 from torchvision.transforms import ColorJitter, RandomPerspective
 
-jitter = ColorJitter(brightness=0.08616238087415695
-, contrast=0.1607924997806549
-, saturation=0, hue=0.07243576645851135
+import random
+brightness = 0.04835025953743052
+contrast = 0.07352095579562219
+hue = 0.01536353254455466
+distortion_scale = 0.009800950085236237
+p = 0.09129580741470969
+
+run['brightness'] = brightness
+run['contrast'] = contrast
+run['hue'] = hue
+run['distortion_scale'] = distortion_scale
+run['p'] = p
+
+print(brightness, contrast, hue)
+
+jitter = ColorJitter(brightness=brightness
+, contrast=contrast
+, saturation=0, hue=hue
 )
-perspective = RandomPerspective()
+perspective = RandomPerspective(distortion_scale, p)
 def train(dataloader, steps, model, optim, fun_loss, flag=True):
     model.train()
     sm = 0.0
