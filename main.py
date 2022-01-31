@@ -1,29 +1,15 @@
 import torch
 import pickle
 from torchvision.models import resnet18, resnet50, densenet161
-from torch.utils.data import DataLoader
 from models import M5
 from train_one_model import def_train_one_model
 from different_param import def_different_param
 
 from data import project, run, config, device
 
-project['train_data_v.bin'].download()
-project['test_data_v.bin'].download()
-project['val_data_v.bin'].download()
+from data import build_dataloade
 
-with open('train_data_v.bin.bin', 'rb') as file:
-    train_data = pickle.load(file)
-
-with open('test_data_v.bin.bin', 'rb') as file:
-    test_data = pickle.load(file)
-
-with open('val_data_v.bin.bin', 'rb') as file:
-    val_data = pickle.load(file)
-
-train_dataloader = DataLoader(train_data, batch_size=64, shuffle=True)
-val_dataloader = DataLoader(val_data, batch_size=64)
-test_dataloader = DataLoader(test_data, batch_size=64)
+train_dataloader, test_dalaloader, val_dataloader = build_dataloader()
 
 from torch import nn
 
