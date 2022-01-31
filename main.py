@@ -7,9 +7,9 @@ from different_param import def_different_param
 
 from data import project, run, config, device
 
-from data import build_dataloade
+from data import build_dataloader
 
-train_dataloader, test_dalaloader, val_dataloader = build_dataloader()
+train_dataloader, val_dataloader, test_dataloader = build_dataloader()
 
 from torch import nn
 
@@ -44,11 +44,11 @@ def im_show(pic):
     #fig.save("im${i}.jpg")
 
 
-i = 286
-for j in range(10):
-    print(train_dataloader.dataset[j + i][0].shape)
-    im_show(train_dataloader.dataset[j + i][0])
-    print(train_dataloader.dataset[j + i][1])
+# i = 0
+# for j in range(10):
+#     print(val_dataloader.dataset[j + i][0].shape)
+#     im_show(val_dataloader.dataset[j + i][0])
+#     print(val_dataloader.dataset[j + i][1])
 
 
 if config == "train one model":

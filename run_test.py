@@ -25,7 +25,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 #model = resnet18()
 
-name = 'models/model716479_31.pt.pt'
+name = 'models/model824506_20.pt.pt'
 
 model = torch.load(name, map_location=torch.device('cpu'))
 
@@ -37,10 +37,15 @@ from tqdm import tqdm
 print(len(test_dataloader.dataset))
 model.eval()
 i = 0
+accur = 0
+cnt = 0
 with torch.no_grad():
     for X, _ in tqdm(test_dataloader):
         X = X.to(device)
-        pred = model(X).argmax(1).cpu().numpy()
+        cnt += X.shape[0]
+        ans = model(X)
+       # accur += (ans.argmax(dim=1) == _).type(torch.float).sum().item()
+        pred = ans.argmax(1).cpu().numpy()
         predictions.extend(list(pred))
 
 print("done")

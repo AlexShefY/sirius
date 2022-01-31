@@ -1,6 +1,7 @@
 import neptune.new as neptune
 import torch
 import pickle
+from os import listdir
 from torch.utils.data import DataLoader
 run = neptune.init(
     project="lora0207/sirius",
@@ -14,9 +15,12 @@ config = "train one model"
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 def build_dataloader():
-    #project['train_data_v.bin'].download()
-    #project['test_data_v.bin'].download()
-    #project['val_data_v.bin'].download()
+    if 'train_data_v.bin.bin' not in listdir():
+      project['train_data_v.bin'].download()
+    if 'test_data_v.bin.bin' not in listdir():
+      project['test_data_v.bin'].download()
+    if 'val_data_v.bin.bin' not in listdir():
+      project['val_data_v.bin'].download()
 
     with open('train_data_v.bin.bin', 'rb') as file:
         train_data = pickle.load(file)
