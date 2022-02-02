@@ -1,7 +1,6 @@
 import torch
 import pickle
-from torchvision.models import resnet18, resnet50, densenet161
-from models import M5
+from models import M5, resNet, denseNet
 from train_one_model import def_train_one_model
 from different_param import def_different_param
 
@@ -14,15 +13,6 @@ train_dataloader, val_dataloader, test_dataloader = build_dataloader()
 from torch import nn
 
 model = M5()
-#model = resnet18()
-#model.fc = nn.Linear(512, 10)
-
-#for name, module in model.named_children():
-#    if name == 'fc':
-#        continue
-#    print(name, module)
-#    module = nn.Sequential(module, nn.Dropout(p=0.1))
-
 model = model.to(device)
 
 print(model)

@@ -4,6 +4,7 @@ from torchvision.models import resnet18
 from torch.utils.data import DataLoader
 from qhoptim.pyt  import QHAdam
 
+from data import build_dataloader
 from torch.optim.lr_scheduler import ExponentialLR
 
 import neptune.new as neptune
@@ -16,10 +17,7 @@ def write_solution(filename, labels):
             
 project = neptune.init_project(name="lora0207/sirius", api_token="eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiJkZmQyMjc4Ni02NWQwLTRiZTYtYWIyZC0yOGJjOTE2NDNmODEifQ==")
 
-with open('test_data_v.bin.bin', 'rb') as file:
-    test_data = pickle.load(file)
-
-test_dataloader = DataLoader(test_data, batch_size=512)
+train_dataloader, val_dataloader, test_dataloader = build_dataloader()
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -48,5 +46,5 @@ with torch.no_grad():
         pred = ans.argmax(1).cpu().numpy()
         predictions.extend(list(pred))
 
-print("done")
-write_solution('solution.csv', predictions)
+# print("done")
+# write_solution('solution.csv', predictions)

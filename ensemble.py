@@ -46,14 +46,13 @@ for file in listdir():
 	print(file)
 	models.append(torch.load(file, map_location=device))
 
-coefs = [torch.tensor([0.0], requires_grad=True) for model in models]
-coefs[0] = torch.tensor([1.0], requires_grad=True)
+coefs = [torch.tensor([0.125], requires_grad=True) for model in models]
 opt = torch.optim.Adam(coefs, lr=1e-3)
 loss = nn.CrossEntropyLoss()
 
+from tqdm import tqdm
+
 test(coefs, val_dataloader, models, 0)
-for i in range(100):
-	print(i)
+for i in tqdm(range(100)):
 	train(coefs, opt, train_dataloader, models, loss)
-	print(coefs)
 	test(coefs, val_dataloader, models, i + 1)

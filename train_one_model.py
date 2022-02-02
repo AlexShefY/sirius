@@ -7,12 +7,17 @@ import torch
 from data import project, run, config, device
 
 def def_train_one_model(model, train_dataloader, val_dataloader, test_dataloader):
-#	print(model)
-	optim =  QHAdam(model.parameters(), lr=2e-4, nus = (0.38, 1.0), betas=(0.9, 0.999))
+	run['lr'] = lr
+	run['nus_first'] = nus_first
+	run['nus_second'] = nus_second
+	run['betas_first'] = betas_first
+	run['betas_second'] = betas_second
+	run['gamma'] = gamma
+	optim =  QHAdam(model.parameters(), lr=ls, nus = (nus_first, nus_second), betas=(betas_first, betas_second))
 
-	scheduler = ExponentialLR(optimizer = optim, gamma = 0.97)
+	scheduler = ExponentialLR(optimizer = optim, gamma = gamma)
 
-	epochs = 3
+	epochs = 50
 
 	loss = nn.CrossEntropyLoss()
 	import time
@@ -20,10 +25,9 @@ def def_train_one_model(model, train_dataloader, val_dataloader, test_dataloader
 
 	random.seed(time.time())
 	t = random.randint(1, 1000000)
-	print(t)
 	for epoch in range(epochs):
-	    train(train_dataloader, epoch + 1, model, optim, loss)
+	    train(train_dataloader, epoch, model, optim, loss)
 	    test(val_dataloader,epoch + 1, model, loss)
 	    scheduler.step()
-	    torch.save(model, f'model{t}_{epoch}.pt')
-	    run[f'model{t}_{epoch}.pt'].upload(f'model{t}_{epoch}.pt')
+	    torch.save(model, f'models_rubbish/model{t}_{epoch + 1}.pt')
+	    run[f'models_rubbish/model{t}_{epoch + 1}.pt'].upload(f'model{t}_{epoch + 1}.pt')

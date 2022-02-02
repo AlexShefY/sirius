@@ -53,6 +53,7 @@ jitter = ColorJitter(brightness=brightness
 , saturation=0, hue=hue
 )
 perspective = RandomPerspective(distortion_scale, p)
+
 def train(dataloader, steps, model, optim, fun_loss, flag=True):
     model.train()
     sm = 0.0
