@@ -4,7 +4,7 @@ from torch.optim.lr_scheduler import ExponentialLR
 from torch import nn
 import torch
 
-from data import project, run, config, device
+from data import project, run, config, device, lr, nus_first, nus_second, betas_first, betas_second, gamma
 
 def def_train_one_model(model, train_dataloader, val_dataloader, test_dataloader):
 	run['lr'] = lr
@@ -13,7 +13,7 @@ def def_train_one_model(model, train_dataloader, val_dataloader, test_dataloader
 	run['betas_first'] = betas_first
 	run['betas_second'] = betas_second
 	run['gamma'] = gamma
-	optim =  QHAdam(model.parameters(), lr=ls, nus = (nus_first, nus_second), betas=(betas_first, betas_second))
+	optim =  QHAdam(model.parameters(), lr=lr, nus = (nus_first, nus_second), betas=(betas_first, betas_second))
 
 	scheduler = ExponentialLR(optimizer = optim, gamma = gamma)
 

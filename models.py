@@ -50,10 +50,11 @@ class resNet(nn.Module):
   def __init__(self):
     from torchvision.models import resnet18
     super(resNet, self).__init__()
-    self.loader = 'denseNet()'
+    self.loader = 'resNet()'
     self.net = resnet18()
     self.net.fc = nn.Linear(512, 10)
   def get_logits(self, x):
     return self.net(x)
   def forward(self, x):
     return F.log_softmax(self.get_logits(x), dim=-1)
+
