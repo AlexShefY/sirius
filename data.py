@@ -21,8 +21,10 @@ project = neptune.init_project(name="lora0207/sirius", api_token="eyJhcGlfYWRkcm
 config = "train one model"
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
+import os
 def build_dataloader():
+    if 'models_rubbish' not in listdir():
+        os.makedirs('models_rubbish')
     if 'train_data_v.bin.bin' not in listdir():
       project['train_data_v.bin'].download()
     if 'test_data_v.bin.bin' not in listdir():

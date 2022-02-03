@@ -3,6 +3,7 @@ from qhoptim.pyt  import QHAdam
 from torch.optim.lr_scheduler import ExponentialLR
 from torch import nn
 import torch
+from tqdm import tqdm
 
 from data import project, run, config, device, lr, nus_first, nus_second, betas_first, betas_second, gamma
 
@@ -25,7 +26,7 @@ def def_train_one_model(model, train_dataloader, val_dataloader, test_dataloader
 
 	random.seed(time.time())
 	t = random.randint(1, 1000000)
-	for epoch in range(epochs):
+	for epoch in tqdm(range(epochs)):
 	    train(train_dataloader, epoch, model, optim, loss)
 	    test(val_dataloader,epoch + 1, model, loss)
 	    scheduler.step()
