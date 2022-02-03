@@ -23,7 +23,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 #model = resnet18()
 
-name = 'models/model824506_20.pt.pt'
+name = 'model923187_24.pt.pt'
 
 model = torch.load(name, map_location=torch.device('cpu'))
 
@@ -38,7 +38,7 @@ i = 0
 accur = 0
 cnt = 0
 with torch.no_grad():
-    for X, _ in tqdm(test_dataloader):
+    for X, _ in test_dataloader:
         X = X.to(device)
         cnt += X.shape[0]
         ans = model(X)
@@ -47,4 +47,4 @@ with torch.no_grad():
         predictions.extend(list(pred))
 
 # print("done")
-# write_solution('solution.csv', predictions)
+write_solution('solution.csv', predictions)

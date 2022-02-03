@@ -30,4 +30,4 @@ def def_train_one_model(model, train_dataloader, val_dataloader, test_dataloader
 	    test(val_dataloader,epoch + 1, model, loss)
 	    scheduler.step()
 	    torch.save(model, f'models_rubbish/model{t}_{epoch + 1}.pt')
-	    run[f'models_rubbish/model{t}_{epoch + 1}.pt'].upload(f'model{t}_{epoch + 1}.pt')
+	    run[f'models_rubbish/model{t}_{epoch + 1}.pt'].upload(f'models_rubbish/model{t}_{epoch + 1}.pt')

@@ -5,6 +5,8 @@ from data import build_dataloader, device, run
 
 train_dataloader, val_dataloader, test_dataloader = build_dataloader()
 
+from run_test import write_solution
+
 def sum_ans(models, x, coefs):
 	return torch.stack([models[i](x) * coefs[i].to(device) for i in range(len(models))]).sum(dim = 0)
 
@@ -39,20 +41,41 @@ def test(coefs, dataloader, models, step):
 
 chdir('models')
 models = []
+files = []
 for file in listdir():
 	print(file[-6:])
 	if file[-6:] != ".pt.pt":
 		continue
 	print(file)
+	files.append(file)
 	models.append(torch.load(file, map_location=device))
 
 coefs = [torch.tensor([0.125], requires_grad=True) for model in models]
-opt = torch.optim.Adam(coefs, lr=1e-3)
-loss = nn.CrossEntropyLoss()
+#opt = torch.optim.Adam(coefs, lr=1e-3)
+#loss = nn.CrossEntropyLoss()
 
-from tqdm import tqdm
+#from tqdm import tqdm
 
 test(coefs, val_dataloader, models, 0)
-for i in tqdm(range(100)):
-	train(coefs, opt, train_dataloader, models, loss)
-	test(coefs, val_dataloader, models, i + 1)
+#for i in tqdm(range(100)):
+#	train(coefs, opt, train_dataloader, models, loss)
+#	test(coefs, val_dataloader, models, i + 1)
+
+for model in models:
+	model.eval()
+
+predictions = []
+
+with torch.no_grad():
+    for X, _ in test_dataloader:
+        X = X.to(device)
+  #      print(X.shape)
+  #      for idx, model in enumerate(models):
+  #      	print(files[idx])
+  #      	if files[idx] == 'model771406_18.pt.pt':
+  #      		print(model)
+  #      	model(X)
+        pred = sum_ans(models, X, coefs).argmax(dim=1).cpu().numpy()
+        predictions.extend(list(pred))
+
+write_solution('solution.csv', predictions)
