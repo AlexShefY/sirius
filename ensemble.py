@@ -7,7 +7,7 @@ from tqdm import tqdm
 
 train_dataloader, val_dataloader, test_dataloader = build_dataloader()
 
-from run_test import write_solution
+from write_solution import write_solution
 
 def sum_ans(models, x, coefs):
 	return torch.stack([models[i](x) * coefs[i].to(device) for i in range(len(models))]).sum(dim = 0)

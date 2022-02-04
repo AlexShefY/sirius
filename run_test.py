@@ -9,12 +9,6 @@ from torch.optim.lr_scheduler import ExponentialLR
 
 import neptune.new as neptune
 
-def write_solution(filename, labels):
-    with open(filename, 'w') as solution:
-        print('Id,Category', file=solution)
-        for i, label in enumerate(labels):
-            print(f'{i},{label}', file=solution)
-            
 project = neptune.init_project(name="lora0207/sirius", api_token="eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiJkZmQyMjc4Ni02NWQwLTRiZTYtYWIyZC0yOGJjOTE2NDNmODEifQ==")
 
 train_dataloader, val_dataloader, test_dataloader = build_dataloader()
@@ -34,22 +28,12 @@ from tqdm import tqdm
 
 print(len(test_dataloader.dataset))
 model.eval()
-# print(model)
-# for x, y in train_dataloader:
-#     x = x.to(device)
-#     y = y.to(device)
-#     print(model(x).shape)
-i = 0
-accur = 0
-cnt = 0
+
 with torch.no_grad():
     for X, _ in test_dataloader:
         X = X.to(device)
-        cnt += X.shape[0]
         ans = model(X)
-       # accur += (ans.argmax(dim=1) == _).type(torch.float).sum().item()
         pred = ans.argmax(1).cpu().numpy()
         predictions.extend(list(pred))
 
-print("done")
-# write_solution('solution.csv', predictions)
+write_solution('solution.csv', predictions)
