@@ -1,7 +1,9 @@
 from os import listdir, chdir
+import os
 import torch
 from torch import nn
 from data import build_dataloader, device, run
+from tqdm import tqdm
 
 train_dataloader, val_dataloader, test_dataloader = build_dataloader()
 
@@ -33,49 +35,58 @@ def test(coefs, dataloader, models, step):
     x = x.to(device)
     y = y.to(device)
     cnt += x.shape[0]
-    #print((sum_ans(models, x, coefs).argmax(dim=1) == y))
     accur += (sum_ans(models, x, coefs).argmax(dim=1) == y).type(torch.float).sum()
-  print(accur)
   accur /= cnt
   run['accuracy'].log(accur, step=step)
+  return accur
 
-chdir('models')
-models = []
-files = []
-for file in listdir():
-	print(file[-6:])
-	if file[-6:] != ".pt.pt":
-		continue
-	print(file)
-	files.append(file)
-	models.append(torch.load(file, map_location=device))
+def get_random(dataloader, models, iters):
+	best_coefs = [torch.tensor([0.125]) for model in models]
+	best_accur = test(best_coefs, dataloader, models, 0)
+	for i in tqdm(range(iters)):
+		coefs = torch.rand(len(models))
+		accur = test(coefs, dataloader, models, i + 1)
+		if accur > best_accur:
+			best_accur = accur
+			best_coefs = coefs
+	return best_coefs
 
-coefs = [torch.tensor([0.125], requires_grad=True) for model in models]
-#opt = torch.optim.Adam(coefs, lr=1e-3)
-#loss = nn.CrossEntropyLoss()
+def get_trained(train_dataloader, val_dataloader, models, initial_coefs, iters):
+	coefs = initial_coefs
+	opt = torch.optim.Adam(coefs, lr=1e-3)
+	loss = nn.CrossEntropyLoss()
+	test(coefs, train_dataloader, models, 0)
+	for i in tqdm(range(iters)):
+		train(coefs, opt, train_dataloader, models, loss)
+		test(coefs, val_dataloader, models, i + 1)
+	return coefs
 
-#from tqdm import tqdm
+def get_models(directory):
+	chdir(directory)
+	models = []
+	files = []
+	for file in listdir():
+		if file[-6:] != ".pt.pt":
+			continue
+		files.append(file)
+		models.append(torch.load(file, map_location=device))
+	for model in models:
+		model.eval()
+	chdir('../')
+	return models
 
-test(coefs, val_dataloader, models, 0)
-#for i in tqdm(range(100)):
-#	train(coefs, opt, train_dataloader, models, loss)
-#	test(coefs, val_dataloader, models, i + 1)
 
-for model in models:
-	model.eval()
+def get_predictions(models, coefs):
+	predictions = []
+	with torch.no_grad():
+		for X, _ in test_dataloader:
+			X = X.to(device)
+			pred = sum_ans(models, X, coefs).argmax(dim=1).cpu().numpy()
+			predictions.extend(list(pred))
+	return predictions
 
-predictions = []
 
-with torch.no_grad():
-    for X, _ in test_dataloader:
-        X = X.to(device)
-  #      print(X.shape)
-  #      for idx, model in enumerate(models):
-  #      	print(files[idx])
-  #      	if files[idx] == 'model771406_18.pt.pt':
-  #      		print(model)
-  #      	model(X)
-        pred = sum_ans(models, X, coefs).argmax(dim=1).cpu().numpy()
-        predictions.extend(list(pred))
-
-write_solution('solution.csv', predictions)
+models = get_models('models')
+print(os.getcwd())
+coefs = get_random(val_dataloader, models, 10)
+write_solution('solution.csv', get_predictions(models, coefs))
