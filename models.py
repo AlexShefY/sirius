@@ -241,7 +241,7 @@ class ModifiedResNet(nn.Module):
     - The final pooling layer is a QKV attention instead of an average pool
     """
 
-    def __init__(self, layers, output_dim, heads, input_resolution=224, width=64):
+    def __init__(self, layers, output_dim, heads, input_resolution=32, width=64):
         super().__init__()
         self.output_dim = output_dim
         self.input_resolution = input_resolution
