@@ -1,6 +1,6 @@
 import torch
 import pickle
-from models import M5, resNet, denseNet, CnnFnnModel
+from models import M5, resNet, denseNet, CnnFnnModel, ModifiedResNet
 from train_one_model import def_train_one_model
 from different_param import def_different_param
 
@@ -12,7 +12,7 @@ train_dataloader, val_dataloader, test_dataloader = build_dataloader()
 
 from torch import nn
 
-model = M5()
+model = ModifiedResNet()
 model = model.to(device)
 
 print(model)

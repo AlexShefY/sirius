@@ -4,6 +4,7 @@ from torchvision.models import resnet18
 from torch.utils.data import DataLoader
 from qhoptim.pyt  import QHAdam
 
+from write_solution import write_solution
 from data import build_dataloader
 from torch.optim.lr_scheduler import ExponentialLR
 
