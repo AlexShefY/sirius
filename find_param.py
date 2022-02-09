@@ -6,6 +6,7 @@ from different_param import def_different_param
 
 import optuna
 from data import project, run, config, device
+from optuna.visualization import plot_optimization_history
 
 from data import build_dataloader
 from data import project, run, config, device, lr, nus_first, nus_second, betas_first, betas_second, gamma
@@ -26,6 +27,8 @@ def get_accuracy(trial):
 import optuna
 
 study = optuna.create_study()
-study.optimize(get_accuracy, n_trials=100)
+study.optimize(get_accuracy, n_trials=10)
 
 print(study.best_params)
+
+plot_optimization_history(study)
