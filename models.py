@@ -6,7 +6,7 @@ import torch.nn.functional as F
 class M4(nn.Module):
     def __init__(self):
         super(M4, self).__init__()
-        self.loader = 'M5()'
+        self.loader = 'M4()'
         self.crop = transforms.CenterCrop(28)
         self.conv1 = nn.Conv2d(3, 32, 4, bias=False)
         self.conv1_bn = nn.BatchNorm2d(32)
