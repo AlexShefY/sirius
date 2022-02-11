@@ -97,6 +97,7 @@ class resNet(nn.Module):
 class CnnFnnModel(nn.Module):
     def __init__(self):
         super(CnnFnnModel, self).__init__()
+        self.crop = transforms.CenterCrop(28)
         self.net = nn.Sequential(
             nn.Conv2d(3, 32, kernel_size=3, padding=1),
             nn.BatchNorm2d(32),
@@ -133,9 +134,10 @@ class CnnFnnModel(nn.Module):
             nn.Linear(1024, 512),
             nn.BatchNorm1d(512),
             nn.ReLU(),
-            #nn.Dropout(p=0.25),
+            nn.Dropout(p=0.25),
             nn.Linear(512, 10))
     def get_logits(self, x):
+      x = self.crop((x - 0.5) * 2)
       return self.net(x)
    
     def forward(self, x):

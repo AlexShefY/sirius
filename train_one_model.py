@@ -6,18 +6,22 @@ import torch
 from tqdm import tqdm
 from math import log
 
-from data import project, run, config, device, lr, nus_first, nus_second, betas_first, betas_second, gamma
+from data import project, run, config, device
 
-def def_train_one_model(model, train_dataloader, val_dataloader, test_dataloader, epochs=50, flag=True, start_epoch=-0):
-	run['lr'] = lr
-	run['nus_first'] = nus_first
-	run['nus_second'] = nus_second
-	run['betas_first'] = betas_first
-	run['betas_second'] = betas_second
-	run['gamma'] = gamma
-	optim =  QHAdam(model.parameters(), lr=lr, nus = (nus_first, nus_second), betas=(betas_first, betas_second))
+def def_train_one_model(model, train_dataloader, val_dataloader, test_dataloader, params, epochs=50, flag=True, start_epoch=-0):
+	run['lr'] = params['lr']
+	run['nus_first'] = params['nus_first']
+	run['nus_second'] = params['nus_second']
+	run['betas_first'] = params['betas_first']
+	run['betas_second'] = params['betas_second']
+	run['gamma'] = params['gamma']
+	run['weight_decay'] = params['weight_decay']
+	print("params:", params['lr'], params['nus_first'], params['nus_second'],
+  params['betas_first'], params['betas_second'], params['gamma'])
+	optim =  QHAdam(model.parameters(), lr=params['lr'], nus = (params['nus_first'], params['nus_second']),
+   betas=(params['betas_first'], params['betas_second']), weight_decay=params['weight_decay'])
 
-	scheduler = ExponentialLR(optimizer = optim, gamma = gamma)
+	scheduler = ExponentialLR(optimizer = optim, gamma = params['gamma'])
 
 	loss = nn.CrossEntropyLoss()
 	import time
