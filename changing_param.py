@@ -8,13 +8,25 @@ import optuna
 from data import project, run, config, device
 from optuna.visualization import plot_optimization_history
 
+from work_model import test
 from data import build_dataloader
 from data import project, run, config, device
 
+import neptune.new as neptune
 train_dataloader, val_dataloader, test_dataloader = build_dataloader()
 
-model = CnnFnnModel()
+run_ = neptune.init(
+    project='lora0207/sirius',
+    api_token='eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiJkZmQyMjc4Ni02NWQwLTRiZTYtYWIyZC0yOGJjOTE2NDNmODEifQ==',
+    run='SIR-798' # for example 'SAN-123'
+    )
+
+run_['models_rubbish/model689675_35.pt'].download()
+model = torch.load('model689675_35.pt.pt')
+print(model)
 model = model.to(device) 
+
+from torch import nn
 
 def get_accuracy(trial):
   print(trial.number)
@@ -35,7 +47,14 @@ def get_accuracy(trial):
     'p': trial.suggest_float('p', 0.3, 0.7, log=True),
     'saturation': trial.suggest_float('saturation', 0.1, 0.3, log=True)
   }
-  return def_train_one_model(model, train_dataloader, val_dataloader, test_dataloader, params_optim, params_change, epochs=5, flag=True, start_epoch = trial.number * 5)
+  global model
+  model1 = model
+  loss = nn.CrossEntropyLoss()
+  acc1 = test(val_dataloader, 0, model, loss, False)[0]
+  cur_acc = def_train_one_model(model, train_dataloader, val_dataloader, test_dataloader, params_optim, params_change, epochs=5, flag=True, start_epoch = trial.number * 5)
+  if cur_acc < acc1:
+    model = model1
+  return cur_acc
 
 import optuna
 
