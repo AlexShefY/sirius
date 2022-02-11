@@ -127,7 +127,7 @@ class CnnFnnModel(nn.Module):
             nn.Dropout(p=0.25),
 
             nn.Flatten(), 
-            nn.Linear(1024*4*4, 1024),
+            nn.Linear(9216, 1024),
             nn.BatchNorm1d(1024),
             nn.ReLU(),
             nn.Dropout(p=0.25),
