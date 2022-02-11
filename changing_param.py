@@ -18,7 +18,7 @@ model = model.to(device)
 
 def get_accuracy(trial):
   print(trial.number)
-  params = {
+  params_optim = {
     'lr': trial.suggest_float('lr', 1e-6, 1e-3, log=True),
     'nus_first': trial.suggest_float('nus_first', 0.4, 1.0, log=True),
     'nus_second': trial.suggest_float('nus_second', 0.8, 1.0, log=True),
@@ -27,7 +27,15 @@ def get_accuracy(trial):
     'gamma': trial.suggest_float('gamma', 0.8, 1.0, log=True),
     'weight_decay': trial.suggest_float('weight_decay', 1e-6, 1e-5, log=True)
   }
-  return def_train_one_model(model, train_dataloader, val_dataloader, test_dataloader, params, epochs=5, flag=True, start_epoch = trial.number * 5)
+  params_change = {
+    'brightness': trial.suggest_float('brightness', 0.1, 0.3, log=True),
+    'contrast': trial.suggest_float('contrast', 0.1, 0.3, log=True),
+    'hue': trial.suggest_float('hue', 0.1, 0.3, log=True),
+    'distortion_scale': trial.suggest_float('distortion_scale', 0.3, 0.7, log=True),
+    'p': trial.suggest_float('p', 0.3, 0.7, log=True),
+    'saturation': trial.suggest_float('saturation', 0.1, 0.3, log=True)
+  }
+  return def_train_one_model(model, train_dataloader, val_dataloader, test_dataloader, params_optim, params_change, epochs=5, flag=True, start_epoch = trial.number * 5)
 
 import optuna
 
