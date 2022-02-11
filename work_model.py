@@ -37,8 +37,8 @@ import random
 brightness = 0.04835025953743052
 contrast = 0.07352095579562219
 hue = 0.01536353254455466
-distortion_scale = 0.009800950085236237
-p = 0.09129580741470969
+distortion_scale = 0.09800950085236237
+p = 0.49129580741470969
 
 run['brightness'] = brightness
 run['contrast'] = contrast
