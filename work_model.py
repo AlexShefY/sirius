@@ -55,7 +55,7 @@ def train(dataloader, steps, model, optim, fun_loss, params_change, flag=True):
     , contrast=params_change['contrast']
     , saturation=params_change['saturation'], hue=params_change['hue']
     )
-    perspective = RandomPerspective(distortion_scale, p)
+    perspective = RandomPerspective(params_change['distortion_scale'], params_change['p'])
     model.train()
     sm = 0.0
     cn = 0.0
