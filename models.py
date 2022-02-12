@@ -361,3 +361,15 @@ class CnnFnnModel_deeper(nn.Module):
    
     def forward(self, x):
       return F.log_softmax(self.get_logits(x), dim=-1)
+
+class mobileNet(nn.Module):
+  def __init__(self):
+    from torchvision.models import mobilenet_v2
+    super(mobileNet, self).__init__()
+    self.loader = 'resNet()'
+    self.net = mobilenet_v2()
+    self.net.fc = nn.Linear(1000, 10)
+  def get_logits(self, x):
+    return self.net(x)
+  def forward(self, x):
+    return F.log_softmax(self.get_logits(x), dim=-1)

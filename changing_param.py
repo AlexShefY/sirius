@@ -1,6 +1,6 @@
 import torch
 import pickle
-from models import M5, resNet, denseNet, CnnFnnModel, ModifiedResNet, CnnFnnModel_deeper
+from models import M5, resNet, denseNet, CnnFnnModel, ModifiedResNet, CnnFnnModel_deeper, mobileNet
 from train_one_model import def_train_one_model
 from different_param import def_different_param
 
@@ -15,14 +15,15 @@ from data import project, run, config, device
 import neptune.new as neptune
 train_dataloader, val_dataloader, test_dataloader = build_dataloader()
 
-run_ = neptune.init(
-    project='lora0207/sirius',
-    api_token='eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiJkZmQyMjc4Ni02NWQwLTRiZTYtYWIyZC0yOGJjOTE2NDNmODEifQ==',
-    run='SIR-798' # for example 'SAN-123'
-    )
+#run_ = neptune.init(
+#    project='lora0207/sirius',
+#    api_token='eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiJkZmQyMjc4Ni02NWQwLTRiZTYtYWIyZC0yOGJjOTE2NDNmODEifQ==',
+#    run='SIR-798' # for example 'SAN-123'
+#    )
 
-run_['models_rubbish/model689675_35.pt'].download()
-model = torch.load('model689675_35.pt.pt')
+#run_['models_rubbish/model689675_35.pt'].download()
+#model = torch.load('model689675_35.pt.pt')
+model = mobileNet()
 print(model)
 model = model.to(device) 
 
