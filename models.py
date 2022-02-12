@@ -293,3 +293,71 @@ class ModifiedResNet(nn.Module):
         x = self.attnpool(x)
 
         return x
+
+
+class CnnFnnModel_deeper(nn.Module):
+    def __init__(self):
+        super(CnnFnnModel_deeper, self).__init__()
+        self.crop = transforms.CenterCrop(28)
+        self.net = nn.Sequential(
+            nn.Conv2d(3, 32, kernel_size=3, padding=1),
+            nn.BatchNorm2d(32),
+            nn.ReLU(),
+            nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1),
+            nn.BatchNorm2d(64),
+            nn.ReLU(),
+            nn.MaxPool2d(2, 2), # output: 64 x 14 x 14
+            nn.Dropout(p=0.25),
+
+            nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1),
+            nn.BatchNorm2d(128),
+            nn.ReLU(),
+            nn.Conv2d(128, 256, kernel_size=3, stride=1, padding=1),
+            nn.BatchNorm2d(256),
+            nn.ReLU(),
+            nn.MaxPool2d(2, 2), # output: 128 x 7 x 7
+            nn.Dropout(p=0.25),
+
+            nn.Conv2d(256, 512, kernel_size=3, stride=1, padding=1),
+            nn.BatchNorm2d(512),
+            nn.ReLU(),
+            nn.Conv2d(512, 1024, kernel_size=3, stride=1, padding=1),
+            nn.BatchNorm2d(1024),
+            nn.ReLU(),
+            nn.MaxPool2d(2, 2), # output: 1024 x 3 x 3
+            nn.Dropout(p=0.25),
+
+            nn.Conv2d(1024, 2048, kernel_size=3, stride=1, padding=1),
+            nn.BatchNorm2d(2048),
+            nn.ReLU(),
+            nn.Conv2d(2048, 4096, kernel_size=3, stride=1, padding=1),
+            nn.BatchNorm2d(4096),
+            nn.ReLU(),
+            nn.MaxPool2d(2, 2), # output: 1024 x 3 x 3
+            nn.Dropout(p=0.25),
+
+      #      nn.Conv2d(4096, 8192, kernel_size=3, stride=1, padding=1),
+      #      nn.BatchNorm2d(8192),
+      #      nn.ReLU(),
+      #      nn.Conv2d(8192, 16384, kernel_size=3, stride=1, padding=1),
+      #      nn.BatchNorm2d(16384),
+      #      nn.ReLU(),
+      #      nn.MaxPool2d(2, 2), # output: 1024 x 3 x 3
+      #      nn.Dropout(p=0.25),
+
+            nn.Flatten(), 
+            nn.Linear(4096, 1024),
+            nn.BatchNorm1d(1024),
+            nn.ReLU(),
+            nn.Dropout(p=0.25),
+            nn.Linear(1024, 512),
+            nn.BatchNorm1d(512),
+            nn.ReLU(),
+            nn.Dropout(p=0.25),
+            nn.Linear(512, 10))
+    def get_logits(self, x):
+      x = self.crop((x - 0.5) * 2)
+      return self.net(x)
+   
+    def forward(self, x):
+      return F.log_softmax(self.get_logits(x), dim=-1)

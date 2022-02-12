@@ -1,6 +1,6 @@
 import torch
 import pickle
-from models import M5, resNet, denseNet, CnnFnnModel, ModifiedResNet
+from models import M5, resNet, denseNet, CnnFnnModel, ModifiedResNet, CnnFnnModel_deeper
 from train_one_model import def_train_one_model
 from different_param import def_different_param
 
