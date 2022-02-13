@@ -9,8 +9,28 @@ train_dataloader, val_dataloader, test_dataloader = build_dataloader()
 
 from write_solution import write_solution
 
+import random
+
+params_change = {
+    'brightness': random.uniform(0.1, 0.3),
+    'contrast': random.uniform(0.1, 0.3),
+    'hue': random.uniform(0.1, 0.3),
+    'distortion_scale': random.uniform(0.4, 0.7),
+    'p': random.uniform(0.4, 0.7),
+    'saturation': random.uniform(0.1, 0.3) 
+}
+
+from torchvision.transforms import ColorJitter, RandomPerspective
+
+
+jitter = ColorJitter(brightness=params_change['brightness']
+    , contrast=params_change['contrast']
+    , saturation=params_change['saturation'], hue=params_change['hue']
+    )
+perspective = RandomPerspective(params_change['distortion_scale'], params_change['p'])
+
 def sum_ans(models, x, coefs):
-	return torch.stack([models[i](x) * coefs[i].to(device) for i in range(len(models))]).sum(dim = 0)
+	return torch.stack([models[i](jitter(perspective(x.to(device)))) * coefs[i].to(device) for i in range(len(models))]).sum(dim = 0)
 
 def train(coefs, opt, dataloader, models, fun_loss):
 	for model in models:
@@ -67,7 +87,7 @@ def get_models(directory):
 	models = []
 	files = []
 	for file in listdir():
-		if file[-6:] != ".pt.pt":
+		if file[-3:] != ".pt":
 			continue
 		files.append(file)
 		models.append(torch.load(file, map_location=device))
@@ -87,25 +107,24 @@ def get_predictions(models, coefs):
 	return predictions
 
 import optuna
+from math import log
 
 class get_cost(object):
   def __init__(self, models):
     self.models = models
   def __call__(self, trial):
     coefs = []
-    for model, i in enumerate(self.models):
-    	coefs.append(torch.tensor([trial.suggest_float(f'i_coef', 0.1, 1, log=True)]))
-    return test(coefs, train_dataloader, self.models, trial.number)
+    for i, model in enumerate(self.models):
+      coefs.append(torch.tensor([trial.suggest_float(f'{i}_coef', 0.1, 1, log=True)]))
+    test(coefs, val_dataloader, self.models, trial.number, True)
+    return -log(test(coefs, train_dataloader, self.models, trial.number, False))
 
 def get_trial(models):
   study = optuna.create_study()
-  study.optimize(get_cost(models), n_trials = 2)
-  return study.best_params
+  study.optimize(get_cost(models), n_trials = 50)
+  coefs = study.best_params
+  return [torch.tensor(coefs[x]) for x in coefs.keys()]
 
 models = get_models('models')
-print(len(models))
-print(os.getcwd())
 coefs = get_trial(models)
-coefs1 = [torch.tensor(coefs[x]) for x in coefs.keys()]
-print(coefs1)
-write_solution('solution.csv', get_predictions(models, coefs1))
+write_solution('solution.csv', get_predictions(models, coefs))
