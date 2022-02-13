@@ -4,7 +4,7 @@ import torch
 from torch import nn
 from data import build_dataloader, device, run
 from tqdm import tqdm
-
+from download_model import all_models
 train_dataloader, val_dataloader, test_dataloader = build_dataloader()
 
 from write_solution import write_solution
@@ -125,6 +125,7 @@ def get_trial(models):
   coefs = study.best_params
   return [torch.tensor(coefs[x]) for x in coefs.keys()]
 
+all_models()
 models = get_models('models')
 coefs = get_trial(models)
 write_solution('solution.csv', get_predictions(models, coefs))
