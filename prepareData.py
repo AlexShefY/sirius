@@ -88,112 +88,84 @@ from neptune.new.types import File
 
 project = neptune.init_project(name="lora0207/sirius", api_token="eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiJkZmQyMjc4Ni02NWQwLTRiZTYtYWIyZC0yOGJjOTE2NDNmODEifQ==")
 
-# lst1 = [(x, y) for (x, y) in train_dataloader.dataset]
-# lst2 = [(x, y) for (x, y) in val_dataloader.dataset]
-# lst3 = [(x, y) for (x, y) in test_dataloader.dataset]
+lst1 = [(x, y) for (x, y) in train_dataloader.dataset]
+lst2 = [(x, y) for (x, y) in val_dataloader.dataset]
+lst3 = [(x, y) for (x, y) in test_dataloader.dataset]
 
-# import plotly.express as px
-# import numpy as np
+import plotly.express as px
+import numpy as np
 
-# # dx = [-1, 0, 0, 1]
-# # dy = [0, 1, -1, 0]
-# # s = 3 * [0]
-# # cnt = 3 * [0]
-# # to_plot = 32 * [[[]]]
-# # for x in range(32):
-# #     to_plot[x] = 32 * [[]]
-# #     for y in range(32):
-# #         to_plot[x][y] = 3 * [0]
+def smooth(mat):
+    sum_ = torch.zeros_like(mat)
+    one = torch.ones_like(mat)
+    cnt_ = torch.zeros_like(mat)
+    b = (0 < mat) & (mat < 1)
+    g = torch.where(b, mat, sum_)
+    g1 = torch.where(b, one, sum_)
+    cnt_[:, 1:, :] += g1[:, :-1, :]
+    cnt_[:, :-1, :] += g1[:, 1:, :]
+    cnt_[:, :, 1:] += g1[:, :, :-1]
+    cnt_[:, :, :-1] += g1[:, :, 1:]
+    sum_[:, 1:, :] += g[:, :-1, :]
+    sum_[:, :-1, :] += g[:, 1:, :]
+    sum_[:, :, 1:] += g[:, :, :-1]
+    sum_[:, :, :-1] += g[:, :, 1:]
+    b3 = (b == 0)
+    b2 = b3 + cnt_
+    b1 = (b2 < 2)
+    return torch.where(b1, mat, sum_ / cnt_)
 
-# # import cv2 as cv
+def show_im(pic):
+    to_plot = 32 * [[[]]]
+    for a in range(32):
+    	to_plot[a] = 32 * [[]]
+    	for b in range(32):
+    		to_plot[a][b] = 3 * [0]
+    		to_plot[a][b][0] = pic[0][a][b].item()
+    		to_plot[a][b][1] = pic[1][a][b].item()
+    		to_plot[a][b][2] = pic[2][a][b].item()
+    fig = px.imshow(to_plot)
+    fig.show()
 
-# def smooth(mat):
-#     sum_ = torch.zeros_like(mat)
-#     one = torch.ones_like(mat)
-#     cnt_ = torch.zeros_like(mat)
-#     b = (0 < mat) & (mat < 1)
-#     g = torch.where(b, mat, sum_)
-#     g1 = torch.where(b, one, sum_)
-#     cnt_[:, 1:, :] += g1[:, :-1, :]
-#     cnt_[:, :-1, :] += g1[:, 1:, :]
-#     cnt_[:, :, 1:] += g1[:, :, :-1]
-#     cnt_[:, :, :-1] += g1[:, :, 1:]
-#     sum_[:, 1:, :] += g[:, :-1, :]
-#     sum_[:, :-1, :] += g[:, 1:, :]
-#     sum_[:, :, 1:] += g[:, :, :-1]
-#     sum_[:, :, :-1] += g[:, :, 1:]
-#     b3 = (b == 0)
-#     b2 = b3 + cnt_
-#     b1 = (b2 < 2)
-#     return torch.where(b1, mat, sum_ / cnt_)
+def prepare_dataset(dataset):
+    for i in range(len(dataset)):
+        for t in range(3):
+            dataset[i] = (smooth(dataset[i][0]), dataset[i][1])
+    return dataset
 
-# def show_im(pic):
-#     to_plot = 32 * [[[]]]
-#     for a in range(32):
-#     	to_plot[a] = 32 * [[]]
-#     	for b in range(32):
-#     		to_plot[a][b] = 3 * [0]
-#     		to_plot[a][b][0] = pic[0][a][b].item()
-#     		to_plot[a][b][1] = pic[1][a][b].item()
-#     		to_plot[a][b][2] = pic[2][a][b].item()
-#     fig = px.imshow(to_plot)
-#     fig.show()
+import random
 
-# for i in range(len(lst1)):
-# 	for t in range(10):
-# 		lst1[i] = (smooth(lst1[i][0]), lst1[i][1])
-# 	#lst1[i] = (smooth(lst1[i][0]), lst1[i][1])
-# 	#lst1[i] = (smooth(lst1[i][0]), lst1[i][1])
-# 	#print(lst1[i][1])
-# 	#show_im(lst1[i][0])
+def show_random(dataset, cnt):
+    for j in range(cnt):
+        i = random.randint(0, 10000)
+        to_plot = 32 * [[[]]]
+        for x in range(32):
+            to_plot[x] = 32 * [[]]
+            for y in range(32):
+                to_plot[x][y] = 3 * [0]
+                to_plot[x][y][0] = lst1[i][0][0][x][y].item()
+                to_plot[x][y][1] = lst1[i][0][1][x][y].item()
+                to_plot[x][y][2] = lst1[i][0][2][x][y].item()
+        fig = px.imshow(to_plot)
+        fig.show()
 
-# print("A")
+import pickle
 
+def upload(dataset, file):
+    fl = open(file, "wb")
+    pickle.dump(dataset, fl)
+    project[file].upload(file)
 
-# for i in range(len(lst2)):
-# 	for t in range(10):
-# 		lst2[i] = (smooth(lst2[i][0]), lst2[i][1])
-#     #lst2[i] = (smooth(lst2[i][0]), lst2[i][1])
-#     #lst2[i] = (smooth(lst2[i][0]), lst2[i][1])
+lst1 = prepare_dataset(lst1)
+lst2 = prepare_dataset(lst2)
+lst3 = prepare_dataset(lst3)
 
-# for i in range(len(lst3)):
-#     for t in range(10):
-#     	lst3[i] = (smooth(lst3[i][0]), lst3[i][1])
-#     #lst3[i] = (smooth(lst3[i][0]), lst3[i][1])
-#     #lst3[i] = (smooth(lst3[i][0]), lst3[i][1])
+show_random(lst1, 2)
+show_random(lst2, 2)
+show_random(lst3, 2)
 
-# # for j in range(10):
-# #     i = j + 97
-# #     for x in range(32):
-# #        for y in range(32):
-# #         to_plot[x][y][0] = lst1[i][0][0][x][y].item()
-# #         to_plot[x][y][1] = lst1[i][0][1][x][y].item()
-# #         to_plot[x][y][2] = lst1[i][0][2][x][y].item()
+upload(lst1, "train_data_v1.bin")
+upload(lst2, "val_data_v1.bin")
+upload(lst3, "test_data_v1.bin")
 
-# #     fig = px.imshow(to_plot)
-# #     fig.show()
-
-
-# import pickle
-
-
-# fl1 = open("train_data_v.bin", "wb")
-
-# fl2 = open("val_data_v.bin", "wb")
-
-# fl3 = open("test_data_v.bin", "wb")
-
-# pickle.dump(lst1, fl1)
-# pickle.dump(lst2, fl2)
-# pickle.dump(lst3, fl3)
-
-# project['val_data.bin'] = File("val_data.bin")
-# project['train_data.bin'] = File("train_data.bin") 
-# project['test_data.bin'] = File("test_data.bin")
-
-
-project['val_data_v.bin'].upload("val_data_v.bin")
-project['train_data_v.bin'].upload("train_data_v.bin") 
-project['test_data_v.bin'].upload("test_data_v.bin")
-
-print("ALJH")
+print("Done")

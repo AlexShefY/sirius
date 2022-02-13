@@ -1,5 +1,5 @@
 import torch
-from data import project, run, config, device
+from data import project, run, device
 from torchvision.transforms import Grayscale, autoaugment, AutoAugment
 import numpy as np
 
@@ -34,21 +34,6 @@ def cat_out(image, size=4, n_squares=0):
 from torchvision.transforms import ColorJitter, RandomPerspective
 
 import random
-default_params = {
-    'brightness': 0.04835025953743052,
-    'contrast': 0.07352095579562219,
-    'hue': 0.01536353254455466,
-    'distortion_scale': 0.09800950085236237,
-    'p': 0.49129580741470969,
-    'saturation': 0
-}
-# run['brightness'] = brightness
-# run['contrast'] = contrast
-# run['hue'] = hue
-# run['distortion_scale'] = distortion_scale
-# run['p'] = p
-
-#print(brightness, contrast, hue)
 
 def train(dataloader, steps, model, optim, fun_loss, params_change, flag=True):
     jitter = ColorJitter(brightness=params_change['brightness']

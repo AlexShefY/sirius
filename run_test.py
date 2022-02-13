@@ -16,22 +16,18 @@ train_dataloader, val_dataloader, test_dataloader = build_dataloader()
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-#model = resnet18()
-
 name = 'models/model923187_24.pt.pt'
 
 model = torch.load(name, map_location=torch.device('cpu'))
 
-#print(len(test_dataloader))
 predictions = []
 
 from tqdm import tqdm
 
-print(len(test_dataloader.dataset))
 model.eval()
 
 with torch.no_grad():
-    for X, _ in test_dataloader:
+    for X, _ in tqdm(test_dataloader):
         X = X.to(device)
         ans = model(X)
         pred = ans.argmax(1).cpu().numpy()

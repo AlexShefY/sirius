@@ -5,10 +5,24 @@ from torch.optim.lr_scheduler import ExponentialLR
 from torch import nn
 
 from torchvision.models import resnet18
-from data import project, run, config, device
+from data import project, run, device
+
+from data import build_dataloader
+train_dataloader, val_dataloader, test_dataloader = build_dataloader()
 
 def def_different_param(train_dataloader, val_dataloader, test_dataloader, lr_l, nus_first_l, nus_second_l, betas_first_l, betas_second_l):
-  
+
+  import random 
+
+  params_change = {
+    'brightness': random.uniform(0.1, 0.3),
+    'contrast': random.uniform(0.1, 0.3),
+    'hue': random.uniform(0.1, 0.3),
+    'distortion_scale': random.uniform(0.4, 0.7),
+    'p': random.uniform(0.4, 0.7),
+    'saturation': random.uniform(0.1, 0.3) 
+  }
+
   for i in range(len(lr_l)):
     model = resnet18()
     model.fc = nn.Linear(512, 10)
@@ -23,7 +37,7 @@ def def_different_param(train_dataloader, val_dataloader, test_dataloader, lr_l,
     loss = nn.CrossEntropyLoss()
     
     for epoch in range(epochs):
-      train(train_dataloader, epoch + 1, model, optim, loss, False)
+      train(train_dataloader, epoch + 1, model, optim, loss, params_change, False)
       scheduler.step()
       
     (accur, sum_loss) = test(val_dataloader, epoch + 1, model, loss, False)
@@ -35,3 +49,10 @@ def def_different_param(train_dataloader, val_dataloader, test_dataloader, lr_l,
     run['nus_second'].log(nus_second_l[i], step=i)
     run['betas_first'].log(betas_first_l[i], step=i)
     run['betas_second'].log(betas_second_l[i], step=i)
+
+lr_l = [x * 5e-5 for x in range(1, 20)]
+nus_first_l = [0.7] * len(lr_l)
+nus_second_l = [1.0] * len(lr_l)
+betas_first_l = [0.995] * len(lr_l)
+betas_second_l = [0.999] * len(lr_l)
+def_different_param(train_dataloader, val_dataloader, test_dataloader, lr_l, nus_first_l, nus_second_l, betas_first_l, betas_second_l)
