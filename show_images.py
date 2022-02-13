@@ -1,12 +1,7 @@
-from data import build_dataloader
-
 import plotly.express as px
 import numpy as np
 
-train_dataloader, val_dataloader, test_dataloader = build_dataloader()
-
 def im_show(pic):
-    print(pic.shape)
     to_plot = 32 * [[[]]]
     for a in range(32):
         to_plot[a] = 32 * [[]]
@@ -19,6 +14,12 @@ def im_show(pic):
     fig.show()
 
 
-i = 0
-for j in range(10):
-    im_show(val_dataloader.dataset[j + i][0])
+if __name__ == '__main__':
+    
+    from data import build_dataloader
+    train_dataloader, val_dataloader, test_dataloader = build_dataloader()
+    import random
+
+    i = random.randint(0, 1000)
+    for j in range(10):
+        im_show(val_dataloader.dataset[j + i][0])

@@ -115,17 +115,7 @@ def smooth(mat):
     b1 = (b2 < 2)
     return torch.where(b1, mat, sum_ / cnt_)
 
-def show_im(pic):
-    to_plot = 32 * [[[]]]
-    for a in range(32):
-    	to_plot[a] = 32 * [[]]
-    	for b in range(32):
-    		to_plot[a][b] = 3 * [0]
-    		to_plot[a][b][0] = pic[0][a][b].item()
-    		to_plot[a][b][1] = pic[1][a][b].item()
-    		to_plot[a][b][2] = pic[2][a][b].item()
-    fig = px.imshow(to_plot)
-    fig.show()
+from show_images import im_show
 
 def prepare_dataset(dataset):
     for i in range(len(dataset)):
@@ -138,16 +128,7 @@ import random
 def show_random(dataset, cnt):
     for j in range(cnt):
         i = random.randint(0, 10000)
-        to_plot = 32 * [[[]]]
-        for x in range(32):
-            to_plot[x] = 32 * [[]]
-            for y in range(32):
-                to_plot[x][y] = 3 * [0]
-                to_plot[x][y][0] = lst1[i][0][0][x][y].item()
-                to_plot[x][y][1] = lst1[i][0][1][x][y].item()
-                to_plot[x][y][2] = lst1[i][0][2][x][y].item()
-        fig = px.imshow(to_plot)
-        fig.show()
+        im_show(lst1[i][0])
 
 import pickle
 

@@ -3,4 +3,3 @@ def write_solution(filename, labels):
         print('Id,Category', file=solution)
         for i, label in enumerate(labels):
             print(f'{i},{label}', file=solution)
-            
