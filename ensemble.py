@@ -28,7 +28,7 @@ def train(coefs, opt, dataloader, models, fun_loss):
 		loss.backward()
 		opt.step()
 
-def test(coefs, dataloader, models, step):
+def test(coefs, dataloader, models, step, flag=True):
   accur = 0
   cnt = 0
   for x, y in dataloader:
@@ -37,7 +37,8 @@ def test(coefs, dataloader, models, step):
     cnt += x.shape[0]
     accur += (sum_ans(models, x, coefs).argmax(dim=1) == y).type(torch.float).sum()
   accur /= cnt
-  run['accuracy'].log(accur, step=step)
+  if flag:
+    run['accuracy'].log(accur, step=step)
   return accur
 
 def get_random(dataloader, models, iters):
@@ -85,8 +86,26 @@ def get_predictions(models, coefs):
 			predictions.extend(list(pred))
 	return predictions
 
+import optuna
+
+class get_cost(object):
+  def __init__(self, models):
+    self.models = models
+  def __call__(self, trial):
+    coefs = []
+    for model, i in enumerate(self.models):
+    	coefs.append(torch.tensor([trial.suggest_float(f'i_coef', 0.1, 1, log=True)]))
+    return test(coefs, train_dataloader, self.models, trial.number)
+
+def get_trial(models):
+  study = optuna.create_study()
+  study.optimize(get_cost(models), n_trials = 2)
+  return study.best_params
 
 models = get_models('models')
+print(len(models))
 print(os.getcwd())
-coefs = get_random(val_dataloader, models, 10)
-write_solution('solution.csv', get_predictions(models, coefs))
+coefs = get_trial(models)
+coefs1 = [torch.tensor(coefs[x]) for x in coefs.keys()]
+print(coefs1)
+write_solution('solution.csv', get_predictions(models, coefs1))
